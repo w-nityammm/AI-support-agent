@@ -1,26 +1,15 @@
-# 🛍️ Spur Chatbot — AI Live Chat Support Agent
+# Spur Chatbot - AI Live Chat Support Agent
 
 A full-stack AI-powered customer support chat widget for a fictional e-commerce store ("Spur Store"). Built with **SvelteKit** (frontend), **Node.js + TypeScript + Express** (backend), **SQLite via sql.js** (database), and **Groq** (LLM provider using `llama-3.3-70b-versatile`).
 
 ---
 
-## 📋 Table of Contents
-
-- [How to Run Locally](#how-to-run-locally)
-- [Environment Variables](#environment-variables)
-- [Architecture Overview](#architecture-overview)
-- [LLM Notes](#llm-notes)
-- [Data Model](#data-model)
-- [Trade-offs & If I Had More Time](#trade-offs--if-i-had-more-time)
-
----
-
-## 🚀 How to Run Locally
+## How to Run Locally
 
 ### Prerequisites
 
 - **Node.js** v18+ (tested on v24)
-- A **Groq API key** — get one free at [console.groq.com/keys](https://console.groq.com/keys)
+- A **Groq API key** - get one free at [console.groq.com/keys](https://console.groq.com/keys)
 
 ### Step 1: Clone / Navigate to the project
 
@@ -78,13 +67,11 @@ Go to **http://localhost:5173** in your browser. Click the chat button (bottom-r
 
 ---
 
-## 🔑 Environment Variables
-
-Backend uses a `.env` file (never committed to git):
+## Environment Variables
 
 | Variable | Required | Default | Description |
 |---|---|---|---|
-| `GROQ_API_KEY` | ✅ Yes | — | Your Groq API key |
+| `GROQ_API_KEY` | Yes | — | Your Groq API key |
 | `PORT` | No | `3001` | Backend server port |
 | `NODE_ENV` | No | `development` | Environment mode |
 | `DB_PATH` | No | `./data/spur_chat.db` | Path to SQLite DB file |
@@ -99,7 +86,7 @@ Frontend uses Vite environment variables (optional):
 
 ---
 
-## 🏗️ Architecture Overview
+## Architecture Overview
 
 ```
 spur_chatbot/
@@ -128,12 +115,12 @@ spur_chatbot/
 
 ### Backend Layers
 
-1. **Route Layer** (`routes/`) — HTTP concerns: parsing, validation middleware, error mapping to HTTP status codes.
-2. **Service Layer** (`services/`) — Business logic. Three focused services:
-   - `chatService` — orchestrates the conversation flow
-   - `dbService` — data access, decoupled from the HTTP layer
-   - `llmService` — Groq API wrapper with system prompt and store knowledge
-3. **Data Layer** (`db/`) — sql.js initialization and disk persistence
+1. **Route Layer** (`routes/`) - HTTP concerns: parsing, validation middleware, error mapping to HTTP status codes.
+2. **Service Layer** (`services/`) - Business logic. Three focused services:
+   - `chatService` - orchestrates the conversation flow
+   - `dbService` - data access, decoupled from the HTTP layer
+   - `llmService` - Groq API wrapper with system prompt and store knowledge
+3. **Data Layer** (`db/`) - sql.js initialization and disk persistence
 
 ### Key Design Decisions
 
@@ -144,7 +131,7 @@ spur_chatbot/
 
 ---
 
-## 🤖 LLM Notes
+## LLM Notes
 
 ### Provider
 **Groq** using model `llama-3.3-70b-versatile`
@@ -161,7 +148,7 @@ Groq provides extremely fast inference (LPU architecture) and a free tier suitab
 **Context window:** The last 20 messages from the conversation are included as history. This allows the AI to give contextual, coherent responses across multi-turn conversations.
 
 **Token limits:**
-- Max response: 512 tokens (~380 words) — sufficient for support answers, avoids runaway costs
+- Max response: 512 tokens (~380 words) - sufficient for support answers, avoids runaway costs
 - Max input message: 2,000 characters (server-side truncation with notice to user)
 
 ### Error Handling
@@ -175,7 +162,7 @@ All errors are surfaced in the chat UI rather than crashing or showing raw error
 
 ---
 
-## 🗃️ Data Model
+## Data Model
 
 ### `conversations`
 | Column | Type | Notes |
@@ -194,12 +181,12 @@ All errors are surfaced in the chat UI rather than crashing or showing raw error
 | `timestamp` | INTEGER | Unix timestamp (ms) |
 
 ### Indexes
-- `idx_messages_conversation_id` — fast lookup of all messages for a session
-- `idx_messages_timestamp` — chronological ordering
+- `idx_messages_conversation_id` - fast lookup of all messages for a session
+- `idx_messages_timestamp` - chronological ordering
 
 ---
 
-## ⚖️ Trade-offs & If I Had More Time
+## Trade-offs & If I Had More Time
 
 ### Current Trade-offs
 
@@ -214,12 +201,9 @@ All errors are surfaced in the chat UI rather than crashing or showing raw error
 ### If I Had More Time
 
 - **Streaming responses**: Use Groq's streaming API to show the AI response word-by-word (much better UX)
-- **FAQ stored in DB**: Seed FAQ entries in a `knowledge_base` table and include them dynamically. Allows non-developer updates.
 - **Better-sqlite3 (production)**: For production, migrate to better-sqlite3 or PostgreSQL for proper multi-process support and better performance.
 - **Redis caching**: Cache recent conversation history to avoid DB reads on every request.
 - **Rate limiting**: Add `express-rate-limit` per IP to prevent abuse.
 - **Conversation analytics**: Track common questions to improve the FAQ over time.
-- **Multi-language support**: Groq's llama model handles multiple languages — could auto-detect and respond in kind.
 - **File attachments**: Allow users to upload order confirmation images.
-- **Human handoff**: When AI can't answer, offer to email a human agent.
-- **Tests**: Unit tests for `chatService`, `llmService`, and `dbService`; integration tests for the API routes.
+- **Human handoff**: When AI can't answer, offer to email / call a human agent.
