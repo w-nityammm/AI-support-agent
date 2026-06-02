@@ -15,6 +15,7 @@ app.use(
       'http://localhost:5173',
       'http://localhost:4173',
       'http://127.0.0.1:5173',
+      'https://ai-support-agent-self.vercel.app',
     ],
     methods: ['GET', 'POST', 'OPTIONS'],
     allowedHeaders: ['Content-Type'],
